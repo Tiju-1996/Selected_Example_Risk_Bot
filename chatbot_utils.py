@@ -450,6 +450,7 @@ def finetune_conv_answer(user_question, conv_result, llm):
         Instructions:
         1.Think like a risk analyst and provide recommendations on the data.
         2. Use your knowledge along with above data to provide recommendations.
+        3. Dont hallucinate strictly base recommendations on the data retreived from conversational answer provided only.
         
          
         """, input_variables=["question", "conv_answer"])

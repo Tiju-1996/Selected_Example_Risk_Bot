@@ -220,13 +220,14 @@ def process_risk_query(llm, user_question):
             else:
                 return "Sorry, I couldn't answer your question.", None, sql
 
-    with st.spinner("📈 Analyzing SQL query results..."):
-        conv = analyze_sql_query(user_question, result.to_dict(orient='records'), llm)
-        placeholders["Initial Conversational Draft"].markdown("## Initial Answer before finetuning process")
-        placeholders["Initial Conversational Draft"].write(conv)
+    #with st.spinner("📈 Analyzing SQL query results..."):
+        #conv = analyze_sql_query(user_question, result.to_dict(orient='records'), llm)
+        #placeholders["Initial Conversational Draft"].markdown("## Initial Answer before finetuning process")
+        #placeholders["Initial Conversational Draft"].write(conv)
 
     with st.spinner("💬 Finetuning conversational answer..."):
-        conv = finetune_conv_answer(user_question, conv, llm)
+        #conv = finetune_conv_answer(user_question, conv, llm)
+        conv = analyze_sql_query(user_question, result.to_dict(orient='records'), llm)
 
     return conv, result, sql
 

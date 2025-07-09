@@ -450,8 +450,6 @@ def finetune_conv_answer(user_question, conv_result, llm):
         Instructions:
         1.Think like a risk analyst and provide recommendations on the data.
         2. Use your knowledge along with above data to provide recommendations.
-        3. Suggest improvemnts to my mitigation plan, risk assesment recommendations, simulating a walkthrough of process and flagging control gaps.
-        4. Add any other recommendation you deem fit based on the data.
         
          
         """, input_variables=["question", "conv_answer"])

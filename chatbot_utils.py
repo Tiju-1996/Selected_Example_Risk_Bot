@@ -441,28 +441,23 @@ def analyze_sql_query(user_question, tabular_answer, llm):
 
 def finetune_conv_answer(user_question, conv_result, llm):
     template_prompt = PromptTemplate(template="""
-        “Based on the following {question}, analyze the situation described below. 
-        Then using the SQL generated data:
-        {conv_answer}
-         
-        Based on above provided data please provide a concise, risk-informed recommendation that aligns with [role’s] responsibilities and judgment standards.”
- 
-        Scenario: [Insert the question, e.g., “Residual risk remains high despite multiple mitigations. What alternative mitigation strategies are suggested?”]
+        Based on the following {question}, analyze the situation described below, think like a Risk Analyst. 
+
+        1. Convert this {conv_answer} from an RDBMS table to sentences.
+        2. Based on sentences generated in step 1, please provide a elaborate risk based recommendation that aligns with [role’s] responsibilities and judgment standards.”
          
         Expected Output:
+
+        Summary of the data:
          
-        Interpretation (what’s happening)
+        Interpretation: (what’s happening)
          
-        Reasoned judgment (why it matters)
+        Reasoned judgment: (why it matters)
          
-        Recommendation (what should be done)
-         
-         
-        Role-Specific Prompt Variants
-        1. For Risk Analyst Prompts
-        “Given the attached risk register, issue log, and mitigation actions, analyze which high-risk items remain unresolved despite interventions.
-        Explain possible gaps and recommend corrective strategies a Risk Analyst would suggest.”
-                """, input_variables=["question", "conv_answer"])
+        Recommendation: (what should be done)
+
+        Next steps in 1 or 2 lines:
+        """, input_variables=["question", "conv_answer"])
     try:
         llm_conv_chain = LLMChain(prompt=template_prompt, llm=llm)
         response = llm_conv_chain.run({"question": user_question, "conv_answer": conv_result})

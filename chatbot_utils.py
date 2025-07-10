@@ -441,7 +441,7 @@ def analyze_sql_query(user_question, tabular_answer, llm):
 
 def finetune_conv_answer(user_question, conv_result, llm):
     template_prompt = PromptTemplate(template="""
-        Based on the following {question}, analyze the situation described below, think like a Risk Analyst. 
+        Based on the following {question}, analyze the situation described below, think like a Risk Manager. 
 
         1. Convert this {conv_answer} from an RDBMS table to sentences.
         2. Based on sentences generated in step 1, please provide a detailed risk based recommendation that aligns with [role’s] responsibilities and judgment standards.”

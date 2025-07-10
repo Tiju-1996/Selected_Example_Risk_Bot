@@ -461,10 +461,9 @@ def finetune_conv_answer(user_question, conv_result, llm):
         Based on the following {question}, analyze the situation described below, think like a Risk Manager.
  
         1. Convert this {conv_answer} from an RDBMS table to sentences.
-        2. Based on sentences generated in step 1, please provide a detailed risk based recommendation that aligns with Risk Manager responsibilities and judgment standards.”
-        3. Be as detailed in the answer as possible.
-        4. Generate a response with key sections Summary, Interpretation, Seasoned judgement, Recommendation and Conclusion.
-        5. Generate an answer which has 100 lines and above.
+        2. Based on sentences generated in step 1, please provide a detailed risk based recommendation that aligns with Risk Manager responsibilities and judgment standards.
+        3. Generate a response with key sections Summary, Interpretation, Seasoned judgement, Recommendation and Conclusion.
+        4. Generate an answer which has atleast 100 lines and above.
         
         Next steps in 1 or 2 lines:
         """, input_variables=["question", "conv_answer"])

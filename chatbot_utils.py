@@ -445,7 +445,7 @@ def finetune_conv_answer(user_question, conv_result, llm):
  
         1. Convert this {conv_answer} from an RDBMS table to sentences.
         2. Based on sentences generated in step 1, please provide a detailed risk based recommendation that aligns with [role’s] responsibilities and judgment standards.”
-        3. Be as detailed as possible.
+        3. Be as detailed and elaborate as possible.
         Expected Output:
         Divide the output into sections as below:
  

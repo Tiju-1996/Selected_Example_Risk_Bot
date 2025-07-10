@@ -288,7 +288,7 @@ else:
         st.session_state.risk_msgs = []
     #llm_audit = ChatNVIDIA(model="meta/llama-3.3-70b-instruct",api_key= NVIDIA_API_KEY,temperature=0,max_tokens=1024, top_p=0.1,seed=42)
     llm_audit = ChatNVIDIA(model="ibnzterrell/Meta-Llama-3.3-70B-Instruct-AWQ-INT4",base_url="http://54.161.46.7/v1/",temperature=0,max_tokens=1024, top_p=0.1,seed=42)
-    llm_finetune = ChatOpenAI(model_name="gpt-3.5-turbo", openai_api_key= OPENAI_KEY , temperature=0, max_tokens=1024)
+    llm_finetune = ChatOpenAI(model_name="gpt-4-turbo", openai_api_key= OPENAI_KEY , temperature=0, max_tokens=1024)
     
     # Display chat history
     for msg in st.session_state.risk_msgs:

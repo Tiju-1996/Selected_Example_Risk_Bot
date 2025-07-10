@@ -341,41 +341,58 @@ def generate_sql_query_for_retrieved_tables(selected_docs, user_question, exampl
     
     
     sql_prompt_template = PromptTemplate(template="""
-        You are a data assistant with access to a MySQL database containing a subset of tables.  
-        ## Below is the metadata for the selected tables:  
-        
+        You are a MySQL expert SQL assistant. You will be given:
+         
+        1. A set of metadata for available database tables.
+        2. A few example SQL queries.
+        3. A user's natural language question.
+         
+        Your task is to generate a **production-ready, efficient, and syntactically correct SELECT SQL query** that answers the question.
+         
+        ## Metadata for available tables:  
         {selected_metadata}  
-
-        ## Below are few example sets of questions and their respective SQL queries for your reference:
-
-        {Question_SQL_Queries_Examples} 
-        
-        Strictly generate only a SELECT SQL query to answer the user's question while following these instructions:  
-        
-        1. **Output Only the SQL Query** – Do not include any explanations or additional text. Don't add sql word before or after the query. 
-        2. **Valid SQL Syntax** – Strictly ensure that the generated query is syntactically correct for MySQL. Very important task.   
-        3. **Proper Table and Column Naming** – Use the exact table and column names as provided in the metadata.  
-        4. **Safe Query Structure** – Avoid SQL errors by:  
-           - Enclosing column names in **backticks** (`"`).
-           - Enclosing table names in **backticks** (`"`).
-           - Enclosing table aliases in **backticks** (`"`).
-           - Please never use tablenames or aliases within double quotes.
-           - Using **explicit JOINs** where necessary.  
-           - Using **LIKE '%'** instead of unknown string values in filters.  
-        5. **Consistent Naming & Uniqueness** – Ensure queries focus only on unique:  
-           - Risks, Controls, Issues, Actions, Risk Registers, Causes, Impacts, Mitigation Plans, Risk Programs, and Risk Program Schedules, even if not explicitly mentioned.  
-        6. **Clear Aliasing** – Assign meaningful aliases to tables. This is important. 
-        7. **Column Ambiguity Elimination** – Avoid ambiguous column references by **always specifying the table alias** when selecting or filtering columns. This is very important.
-        8. **Use Aggregation or DISTINCT as Needed** – If a column might contain duplicates, ensure the query retrieves only unique records using `DISTINCT`.  
-        7. **Ensure Correct Joins** –  
-           - Use appropriate **INNER JOIN, LEFT JOIN, or RIGHT JOIN** when multiple tables are involved.  
-           - Always specify the **correct primary and foreign key relationships** from the metadata. 
-        8. **Very Important**- In query use the tablename where all informations/columns relevant ot user question is available, in case it is not available, please join with other tablename where this information is available.
-        9. **Fuzzy matching **-Please use LIKE % incase of fuzzy matching with string for filtering purpose when there is a doubt about actual value/condition. Please prefer LIKE instead of '=' wherever applicable in SQL query.
-        10. **Column name**- Show (SELECT) all the required column names/counts/aggregates(sum,max,min,avg etc.) from required table/tables to answer the question correctly.
-        11. Please Replace risk_type column with risk_category1 in SQL query if it is there.
-        ## User's Question: {question}  
-        ## SQL Query:  
+         
+        ## Example SQL queries for reference:  
+        {Question_SQL_Queries_Examples}  
+         
+        ## Your Instructions:
+         
+        Strictly follow the instructions below when generating the SQL query:
+         
+        1. **Output Format**  
+           - Return only the raw SQL query. No explanation, markdown, or pre/post text.  
+           - Use standard MySQL syntax.
+         
+        2. **Correctness Rules**  
+           - Use exact table and column names as given in the metadata.  
+           - Enclose all column names, table names, and aliases in backticks (`).  
+           - Use **table aliases** consistently and meaningfully.  
+           - Avoid ambiguous column references — always use the format `alias`.`column`.
+         
+        3. **Performance Optimization**  
+           - Use **indexed columns in WHERE clauses** where available.  
+           - Avoid `SELECT *` — always select only the necessary columns.  
+           - Use `LIMIT` when expecting high volumes and only a preview is needed.  
+           - Avoid using functions in WHERE clauses unless required (to preserve index usage).  
+           - Prefer `LIKE 'value%'` over `LIKE '%value%'` when feasible for index usage.  
+           - Avoid unnecessary subqueries, joins, or sorting.  
+           - Use `DISTINCT`, `GROUP BY`, or aggregations (`SUM`, `AVG`, etc.) only if needed.
+         
+        4. **Join Logic**  
+           - Use INNER JOIN or LEFT JOIN where appropriate.  
+           - Join only when required columns are not in the main table.  
+           - Ensure joins use correct foreign key relationships based on metadata.
+         
+        5. **Filter Conditions**  
+           - Use WHERE only when required by the question.  
+           - Use `LIKE '%value%'` for fuzzy string matches or when the exact match is uncertain.  
+           - Use conditions only on required indexed columns when possible.
+         
+        6. **Special Instructions**  
+           - If the column `risk_type` is referenced, always use `risk_category1` instead.  
+           - Ensure the result focuses on **unique** Risks, Controls, Issues, Actions, Risk Registers, Causes, Impacts, Mitigation Plans, Risk Programs, and Risk Program Schedules — even if uniqueness isn't explicitly requested.
+         
+        ## User's Question: {question} 
         """,input_variables=["selected_metadata","Question_SQL_Queries_Examples", "question"])
 
     llm_chain_sql = LLMChain(prompt=sql_prompt_template, llm=llm)

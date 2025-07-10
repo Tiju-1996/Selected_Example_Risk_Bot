@@ -258,7 +258,7 @@ if policy_flag:
         retriever = configure_retriever(uploaded)
         msgs = StreamlitChatMessageHistory()
         memory = ConversationBufferMemory(memory_key="chat_history", chat_memory=msgs, return_messages=True)
-        llm_policy = ChatOpenAI(model_name="gpt-3.5-turbo", openai_api_key= OPENAI_KEY , temperature=0, streaming=True)
+        llm_policy = ChatOpenAI(model_name="gpt-4o", openai_api_key= OPENAI_KEY , temperature=0, streaming=True)
         qa_chain = ConversationalRetrievalChain.from_llm(llm_policy, retriever=retriever, memory=memory, verbose=False)
     
     if len(msgs.messages)==0 or st.sidebar.button("Clear history"):

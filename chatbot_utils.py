@@ -458,21 +458,12 @@ def analyze_sql_query(user_question, tabular_answer, llm):
 
 def finetune_conv_answer(user_question, conv_result, llm):
     template_prompt = PromptTemplate(template="""
-        Based on the following {question}, analyze the situation described below, think like a Risk Strategist.
+        Based on the following {question}, analyze the situation described below, think like a Risk Manager.
  
         1. Convert this {conv_answer} from an RDBMS table to sentences.
-        2. Based on sentences generated in step 1, please provide a detailed risk based recommendation that aligns with [role’s] responsibilities and judgment standards.”
-        3. Be as detailed and elaborate as possible.
-        Expected Output:
-        Divide the output into sections as below:
- 
-        Section 1) Summary of the data
-        Section 2) Interpretation: (what’s happening)
-        Section 3) Reasoned judgment: (why it matters)
-        Section 4) Recommendation: (what should be done)
- 
-        Section 5) Conclude the answer using reasoned judgement and recommendation.
- 
+        2. Based on sentences generated in step 1, please provide a detailed risk based recommendation that aligns with Risk Manager responsibilities and judgment standards.”
+        3. Be as detailed in the answer as possible.
+        
         Next steps in 1 or 2 lines:
         """, input_variables=["question", "conv_answer"])
     try:

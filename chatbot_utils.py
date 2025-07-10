@@ -441,26 +441,30 @@ def analyze_sql_query(user_question, tabular_answer, llm):
 
 def finetune_conv_answer(user_question, conv_result, llm):
     template_prompt = PromptTemplate(template="""
-        Based on the following {question}, analyze the situation described below, think like a Risk Manager. 
-
-        1. Convert this {conv_answer} from an RDBMS table to sentences.
-        2. Based on sentences generated in step 1, please provide a detailed risk based recommendation that aligns with [role’s] responsibilities and judgment standards.”
-        3. Be as detailed as possible.
-    
-        Expected Output:
-        Divide the output into sections as below:
-
-        Section 1) Summary of the data
+       You are an expert in risk management, internal controls, and enterprise audit. I will provide you with a relational database output (RDBMS table or JSON) related to risk indicators, control effectiveness, audit findings, compliance issues, or incidents.
+ 
+        Your task is to :
          
-        Section 2) Interpretation: (what’s happening)
+        1. Translate the table into clear, contextual sentences as Risk Manager.
+        2. Analyze and interpret what the data indicates—look for emerging risks, breakdowns in control, or potential non-compliance.
+        3. Apply reasoned judgment to explain why these issues matter, referencing professional standards and the risk responsibilities of the role.
+        4. Provide detailed, risk-based, and actionable recommendations, aligned with the role’s mandate and decision-making standards.
+        5. Structure your output in five clearly labeled sections:
          
-        Section 3) Reasoned judgment: (why it matters)
+        Section 1: Summary of the Data  
+        Section 2: Interpretation (What’s happening)  
+        Section 3: Reasoned Judgment (Why it matters)  
+        Section 4: Recommendation (What should be done)  
+        Section 5: Conclusion (Summarizing your judgment and proposed action)
          
-        Section 4) Recommendation: (what should be done)
-
-        Section 5) Conclude the answer using reasoned judgement and recommendation.
-
-        Next steps in 1 or 2 lines:
+        Additional Instructions:
+        - If applicable, refer to risk management frameworks like COSO ERM or ISO 31000.
+        - Distinguish between control design flaws and control execution failures.
+        - If thresholds exist in the data, clearly flag any breaches.
+        - Use likelihood × impact to guide severity assessment.
+        - Optionally tag recommendations by People, Process, or Technology.
+         
+        Provide your analysis using professional, executive-level language suitable for decision-making, regulatory scrutiny, and board-level reporting.
         """, input_variables=["question", "conv_answer"])
     try:
         llm_conv_chain = LLMChain(prompt=template_prompt, llm=llm)

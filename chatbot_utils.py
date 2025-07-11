@@ -307,7 +307,7 @@ def question_reframer(selected_docs,user_question,llm):
 ####################################################################################
 # Checks if any Table_names column in any row matches top 3 table names.
 ####################################################################################
-def matches_selected_tables(row):
+def matches_selected_tables(row, selected_tables_set):
     row_tables = [tbl.strip() for tbl in row.split(",")]
     return any(tbl in selected_tables_set for tbl in row_tables)
 
@@ -345,7 +345,7 @@ def generate_sql_query_for_retrieved_tables(selected_docs, user_question, exampl
     # Create a lowercase or stripped version of top 3 table names
     selected_tables_set = set([tbl.strip() for tbl in selected_tables])    
     # Apply the top 3 table names filter on question SQL example set
-    filtered_df = example_df[example_df["Table_names"].apply(matches_selected_tables)]
+    filtered_df = example_df[example_df["Table_names"].apply(lambda row: matches_selected_tables(row, selected_tables_set))]
     # Load and format examples
     examples = "\n".join([
         f"- Question: {row['Question']}\n  SQL Queries: {row['SQL Queries']}"

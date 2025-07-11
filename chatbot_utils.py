@@ -304,6 +304,13 @@ def question_reframer(selected_docs,user_question,llm):
 
 
 
+####################################################################################
+# Checks if any Table_names column in any row matches top 3 table names.
+####################################################################################
+def matches_selected_tables(row):
+    row_tables = [tbl.strip() for tbl in row.split(",")]
+    return any(tbl in selected_tables_set for tbl in row_tables)
+
 
 ############################################################
 # 7. Generate SQL Query Using Metadata for Selected Tables
@@ -332,11 +339,17 @@ def generate_sql_query_for_retrieved_tables(selected_docs, user_question, exampl
         filtered_metadata_str += f"Table Name: {extracted_info.get('Table Name', 'N/A')}\n"
         filtered_metadata_str += f"Columns: {extracted_info.get('Columns', 'N/A')}\n"
         filtered_metadata_str += f"Relations: {extracted_info.get('Relations', 'N/A')}\n"
-        
-      # Load and format examples
+
+    #Top 3 table names
+    selected_tables = [doc.metadata["table_name"] for doc in selected_docs]  
+    # Create a lowercase or stripped version of top 3 table names
+    selected_tables_set = set([tbl.strip() for tbl in selected_tables])    
+    # Apply the top 3 table names filter on question SQL example set
+    filtered_df = example_df[example_df["Table_names"].apply(matches_selected_tables)]
+    # Load and format examples
     examples = "\n".join([
         f"- Question: {row['Question']}\n  SQL Queries: {row['SQL Queries']}"
-        for _, row in example_df.iterrows()
+        for _, row in filtered_df.iterrows()
     ])
     
     
